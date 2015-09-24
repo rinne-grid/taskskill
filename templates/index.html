@@ -1,0 +1,32 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>タスクスキル</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body class="login-page">
+<div id="login-form">
+    <div class="logo" >
+        <a href="{% url 'tasks:login' %}"><p><b>Task</b> Skill</p></a>
+    </div>
+    <form action="{% url 'tasks:login' %}" method="post">
+    <div class="login-item">
+        <div class="login-label">ユーザー</div>
+        <div>{{ form.username }}</div>
+    </div>
+    <div class="login-item">
+        <div class="login-label">パスワード</div>
+        <div>{{ form.password }}</div>
+    </div>
+    <div class="login-item login-button">
+        <button type="submit" class="btn-success">ログイン</button>
+    </div>
+    {% csrf_token %}
+    </form>
+</div>
+{{ error_message }}
+</body>
+</html>
+

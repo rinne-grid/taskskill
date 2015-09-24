@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>トップページ</title>
+</head>
+<body>
+    <a href="{% url 'tasks:top' %}">ようこそ、タスクの世界へ</a>
+    <br>
+    ユーザ@{{ user }} - 魔力@{{ skill_point }} - レベル@{{ level }}
+
+    <br>
+    <form action='{% url 'tasks:post' %}' method="post">
+        {{ form.task_item }} {{ form.task_item_detail }}<br>
+        {{ form.memo }}
+        {% csrf_token %}
+        <button type="submit">登録</button>
+    </form>
+
+    {% if form.errors %}
+        {{ form.errors }}
+    {% endif %}
+    {{ error_message }}
+
+    <br>
+
+    <table>
+        <tr>
+            <th>タスク日付</th>
+            <th>タスク名</th>
+            <th>ポイント</th>
+            <th>メモ</th>
+        </tr>
+    {% for player_task in player_task_list %}
+        <tr>
+            <td>{{ player_task.task_ymd }}</td>
+            <td>{{ player_task.task_item_detail.name }}</td>
+            <td>{{ player_task.task_item_detail.point }}</td>
+            <td>{{ player_task.memo }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <a href="{% url 'tasks:logout' %}">ログアウト</a>
+</body>
+
+{% include "xhr.html" %}
+
+<script>
+    $(document).ready(function() {
+        var task_item_id = "id_task_item";
+        var task_item_detail_id = "id_task_item_detail";
+        $("#"+task_item_id).on("change", function(){
+            //$.ajax({% url 'api:task_item_detail' %},
+            //)
+            var task_item_value = this.value;
+            if(this.value == "") return;
+
+            $.ajax({
+                type: 'POST',
+                dataType: 'text',
+                url: '{% url 'api:task_item_detail' %}',
+                data: "key="+ task_item_value,
+                success: function(data) {
+                    do_callback(data);
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+
+            function do_callback(data) {
+                console.log(data);
+                var result = JSON.parse(data);
+                console.log(result);
+
+                var task_item_detail_html = "";
+                var result_length = result.length;
+                for(var i = 0; i < result_length; i++) {
+                    console.log(result[i].name);
+                    task_item_detail_html += '<option value="'+result[i].id+'">'+ result[i].name+'('+ result[i].point +')' +'</option>';
+                }
+                console.log(task_item_detail_html);
+
+                $("#"+task_item_detail_id).html(task_item_detail_html);
+            }
+
+            console.log(this.value);
+        });
+    });
+</script>
+
+</html>

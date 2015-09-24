@@ -1,0 +1,178 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/font-awesome-4.4.0/css/font-awesome.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'lib/jquery-ui-1.11.4.custom/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/jquery-popbox/popbox.css' %}">
+    <script src="{% static 'lib/jquery-1.11.3.min.js' %}"></script>
+    <script src="{% static 'lib/jquery-ui-1.11.4.custom/jquery-ui.js' %}"></script>
+    <script src="{% static 'lib/jquery-popbox/popbox.min.js' %}"></script>
+    <style>
+    .loading {
+        background: url({% static 'image/load.gif' %});
+        background-size: cover;
+        width: 132px;
+        height: 17px;
+        display:none;
+    }
+    #datepicker {
+        width: 50%;
+    }
+    </style>
+    {% block child_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav id="nav-header">
+            <ul class="nav-context">
+                <li class="nav-header-item logo-top"><a href="{% url 'rit:top' %}"><b>Task</b> Skill</a></li>
+
+                <li class="nav-header-item nav-header-contents">
+                    <i class="fa fa-cogs"></i> 設定
+                    <ul>
+                        <li class="nav-header-menu">
+                            <a href="">サブメニュー１</a>
+                        </li>
+                        <li class="nav-header-menu">
+                            <a href="">サブメニュー２</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-header-item nav-header-settings">
+                    {{ user.username }}さん <i class="fa fa-angle-double-down"></i>
+                    <ul>
+                        <li class="nav-header-menu">
+                            <a href="">サブメニュー１</a>
+                        </li>
+                        <li class="nav-header-menu">
+                            <a href="{% url 'tasks:logout' %}">ログアウト</a>
+                        </li>
+                    </ul>
+                </li>
+
+
+            </ul>
+
+        </nav>
+    </header>
+    <section class="main-content-section">
+        {% block content %}{% endblock %}
+
+    </section>
+
+    <footer></footer>
+    {% include 'xhr.html' %}
+    <script>
+
+        function cre_user_task(target_task_id, task_item_name) {
+            var cre_task_ymd = $("#datepicker_task_ymd").val();
+            $.ajax({
+                type: 'POST',
+                dataType: 'text',
+                url: '{% url 'api:cre_user_task' %}',
+                data: "key=" + target_task_id + "&task_ymd="+cre_task_ymd,
+                success: function (data) {
+                    var result_data = JSON.parse(data);
+                    var user_task_id = result_data.task_id;
+                    console.log(user_task_id);
+                    loading(false);
+
+                    var popbox = "<div class='popbox'>" +
+                                    "<div class='collapse'>" +
+                                        "<div class='box'>test</div>" +
+                                    "</div>" +
+                                "</div>";
+
+                    // タスクリスト生成用タグ
+                    var edit_check = "<input type='checkbox' class='finish_check'>";
+                    var edit_memo = "<input type='text' class='task_memo'>";
+
+                    var delete_link = "<a class='list-item-delete' href='#'>" +
+                                    "<i class='fa fa-minus-square fa-2 task-icon del'></i></a>";
+
+                    var edit_link = "<a class='list-item-edit' href='#'>" +
+                                    "<i class='fa fa-check-circle fa-2 task-icon edit'></i></a>";
+
+                    var exec_task = "<li class='exec-task-item'>" +
+                        edit_check + task_item_name + edit_memo + edit_link + delete_link +
+                        "<input type='hidden' class='user_task_id' value='"+user_task_id+"'></li>";
+
+
+                    $("#exec-task-list").append(exec_task);
+
+                }
+                ,
+                error: function (e) {
+                    loading(false);
+                    console.log(e);
+                }
+            });
+        }
+
+        function add_user_task_memo(target_task_id, task_memo) {
+            $.ajax({
+                type: 'POST',
+                dataType: 'text',
+                url: '{% url 'api:add_user_task_memo' %}',
+                data: 'key='+target_task_id+'&memo='+encodeURIComponent(task_memo),
+                success: function(e) {
+                    console.log("OK");
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        function do_user_task_status(target_task_id, status, scope) {
+            $.ajax({
+                type: 'POST',
+                dataType: 'text',
+                url: '{% url 'api:do_user_task_status' %}',
+                data: 'key='+target_task_id+'&status='+status,
+                success: function(e) {
+                    console.log(e);
+                    console.log($(scope).parent());
+                    if(status == "doing") {
+                        $(scope).parent().removeClass('executed-task-item');
+                        console.log($(scope).find('.exec-task-item'));
+                        $(scope).parent().find('.finished_message').remove();
+                    } else {
+                        $(scope).parent().addClass('executed-task-item');
+                        $(scope).parent().prepend('<span class="finished_message">(済)</span>');
+                    }
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        function del_user_task(target_task_id, del_scope) {
+            $.ajax({
+                type: 'POST',
+                dataType: 'text',
+                url: '{% url 'api:del_user_task' %}',
+                data: 'key=' + target_task_id,
+                success: function(e) {
+                    $(del_scope).parent().remove();
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            })
+        }
+
+    </script>
+
+
+</body>
+</html>

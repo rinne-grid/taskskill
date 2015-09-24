@@ -1,0 +1,158 @@
+{% load staticfiles %}
+/* @media screen adn (min-width:XXXpx) {}*/
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, .main-content-section {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    background-color: #f7f7f7;
+}
+
+.logo-top {
+    margin-left: 5%;
+    font-size: 30px;
+    width: 200px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 55px;
+}
+
+.logo-top a{
+    color: #ffffff;
+    text-decoration: none;
+}
+.logo-top b {
+    /* color: #4cae4c;*/
+}
+
+#nav-header * {
+     /*
+    -webkit-transition: 0.5s;
+    transition: 0.5s; */
+    list-style-type: none;
+
+}
+
+.btn-success {
+    background-color: #3c8dbc;
+    border: 1px solid transparent ;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    padding: 8px;
+
+}
+
+#nav-header {
+    background-color: #2882b5;
+    height: 50px;
+
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    width: 100%;
+}
+
+#nav-header ul li ul li {
+    visibility: hidden;
+    overflow: hidden;
+    height: 50px;
+
+}
+
+#nav-header ul li ul {
+    position: absolute;
+    top: 50px;
+    height: 0;
+}
+
+#nav-header ul li:hover ul li {
+    visibility: visible;
+    overflow: visible;
+    height: 50px;
+
+}
+
+#nav-header ul li ul li:hover {
+    background-color: #9acfea;
+}
+
+/* ナビゲーションメニュー親 */
+.nav-header-item {
+    width: 180px;
+    height: 50px;
+    -webkit-box-sizing: border-box;
+    display: inline-block;
+}
+
+
+/* ナビゲーションメニュー子ul */
+.nav-header-item ul {
+    width: 180px;
+}
+
+
+
+.nav-header-menu {
+    -webkit-box-sizing: border-box;
+    width: 100%;
+    color: #FFFFFF;
+    background-color: #5c9ccc;
+    text-align: center;
+    line-height: 50px;
+}
+
+.nav-header-menu a {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+
+.nav-header-contents {
+    position:absolute;
+    text-align: center;
+    /* background-color: #5c9ccc; */
+    line-height: 50px;
+}
+
+.nav-header-contents:hover {
+    background-color: #5c9ccc;
+}
+
+.nav-header-settings {
+    position:absolute;
+    right: 0;
+    text-align: center;
+    /* background-color: #5c9ccc; */
+    line-height: 50px;
+}
+
+.nav-header-settings:hover {
+    background-color: #5c9ccc;
+}
+
+.nav-context {
+
+}
+
+
+.clear-fix {
+    display: inline-table;
+}
+
+
+.check {
+    display: none;
+}
+
+.executed-task-item {
+    color: #dddddd;
+}
+
+.finished_message {
+    color: #d43f3a;
+}

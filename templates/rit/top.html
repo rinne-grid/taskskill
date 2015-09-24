@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}メモするやつ{% endblock %}
+{% block child_css %}
+<link rel="stylesheet" href="{% static 'css/top.css' %}">
+{% endblock %}
+
+{% block content %}
+        <i class="clearfix"></i>
+        <div id="content-wrapper">
+            <section id="utilities">
+                <div id="utility">
+                    <form acton="{% url 'rit:top'  %}" method="post">
+                        <input type="text" id="datepicker" name="datepicker">
+                        <input type="hidden" id="datepicker_task_ymd" value="{{ task_ymd }}">
+                        <button type="submit" class="btn-success">表示</button>
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </section>
+            <section id="execs">
+                <!-- left_area -->
+                <div id="exec-tasks">
+                    <h2>君は本気か？ --- ({{ task_ymd }})</h2>
+                    <ul id="exec-task-list">
+                        {% for user_task in user_tasks_list %}
+                            {% if user_task.finished %}
+                                <li class='exec-task-item executed-task-item'>
+                            {% else %}
+                                <li class='exec-task-item'>
+                            {% endif %}
+                                {% comment %} タスクが完了している場合チェックをつける {% endcomment %}
+                                {% if user_task.finished %}
+                                    <span class="finished_message">(済)</span>
+                                    <input type='checkbox' class="finish_check" checked="checked">
+                                {% else %}
+                                    <input type="checkbox" class="finish_check">
+                                {% endif %}
+
+                                {{ user_task.task_item.name }}
+
+                                {% comment %} タスクにメモがある場合メモを指定 {% endcomment %}
+                                {% if user_task.memo %}
+                                    <input type="text" class="task_memo" value="{{ user_task.memo }}">
+                                {% else %}
+                                    <input type="text" class="task_memo">
+                                {% endif %}
+                                <a class='list-item-edit' href='#'>
+                                    <i class='fa fa-check-circle fa-2 task-icon edit'></i>
+                                </a>
+                                <a class='list-item-delete' href='#'>
+                                    <i class='fa fa-minus-square fa-2 task-icon del'></i>
+                              </a>
+                                <input type="hidden" name="user_task_id" class="user_task_id" value="{{ user_task.id }}">
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="loading"> </div>
+
+                </div>
+            </section>
+
+            <section id="plans">
+                <div id="plan-tasks">
+                    <span class="plan-tasks-label">
+                        今日は何を頑張る？
+                    </span>
+                    <ul>
+                        {% for task_item in task_items_list %}
+                            <li class="list-item">
+                                {{ task_item.name }}
+                                <input type="hidden" value="{{ task_item.id }}">
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+    <script src="{% static 'js/pint.js'  %}"></script>
+
+{% endblock %}
