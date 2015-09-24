@@ -30,3 +30,19 @@ $ (venv) pip install Django==1.8.4
 $ (venv) cd taskskill
 $ (venv) python manage.py runserver
 ```
+
+### アプリケーションログイン
+
+* アプリURL
+  * http://localhost:8000/tasks/index
+* ログイン
+  * ユーザー：main
+  * パスワード：main
+
+### adminログイン
+
+* adminURL
+  * http://localhost:8000/admin
+* ログイン
+  * ユーザー：main
+  * パスワード：main
